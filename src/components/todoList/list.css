@@ -1,0 +1,154 @@
+.todo-buttons {
+  display: flex;
+  align-items: center;
+  margin: 1em 0;
+}
+.todo-buttons button {
+  margin-right: 1em;
+}
+
+ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+.todo-box {
+  padding: 1.5em;
+  border-radius: var(--border-radius);
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: rgba(107, 114, 128, 0.2);
+  color: var(--secondary-color);
+}
+.todo-box .title {
+  display: grid;
+  grid-template-columns: min-content auto min-content min-content;
+  gap: 0.5em;
+  width: 100%;
+  align-items: center;
+}
+.todo-box .title h2 {
+  margin: 0;
+  padding: 0;
+}
+.todo-box input[type=checkbox] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+.todo-box p {
+  padding: 0;
+  margin: 1em 0 0 0;
+}
+
+.edit textarea {
+  width: 99%;
+  margin-top: 0.5em;
+  font-family: Inter;
+  font-size: 1em;
+  resize: none;
+}
+.edit input[type=text] {
+  font-size: 1.4em;
+  font-weight: bold;
+}
+.edit input[type=text],
+.edit textarea {
+  background: rgba(107, 114, 128, 0.4);
+  color: var(--secondary-color);
+  padding: 0.5em;
+  border: none;
+  border-radius: var(--border-radius);
+}
+.edit input[type=text]::placeholder,
+.edit textarea::placeholder {
+  color: var(--light-color);
+}
+
+.ratio-container {
+  display: block;
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 26px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.ratio-container:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+.ratio-container input:checked ~ .checkmark {
+  background-color: #2196f3;
+}
+.ratio-container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.ratio-container .checkmark:after {
+  left: 9px;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.newTodoFormContainer {
+  background: rgba(107, 114, 128, 0.2);
+  padding: 1em;
+  border-radius: var(--border-radius);
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.newTodoFormContainer h2 {
+  margin: 0;
+  padding: 0;
+}
+
+.addNewTodoForm {
+  display: grid;
+  width: 100%;
+  min-width: 500px;
+  gap: 1em;
+}
+.addNewTodoForm input {
+  padding: 0.5em;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--light-color);
+}
+.addNewTodoForm button {
+  width: 100%;
+}
+@media (max-width: 768px) {
+  .addNewTodoForm {
+    min-width: fit-content;
+  }
+}
+
+/*# sourceMappingURL=list.css.map */

@@ -1,19 +1,45 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+
+import "./index.scss";
+import LoginPage from "./components/login";
+import Layout from "./components/layout";
+import App from "./App";
+
+function ProtectedPage() {
+  return <h3>Protected</h3>;
+}
+
+const router = createBrowserRouter([
+  {
+    id: "root",
+    path: "/",
+    Component: Layout,
+    children: [
+      {
+        index: true,
+        Component: App,
+      },
+      {
+        path: "login",
+        Component: LoginPage,
+      },
+      {
+        path: "protected",
+        Component: ProtectedPage,
+      },
+    ],
+  },
+  {
+    path: "/logout",
+  },
+]);
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  document.getElementById("root") as HTMLElement,
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+root.render(
+  <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />,
+);
