@@ -17,7 +17,8 @@ export const fetchApi = async <T>(
         "Content-Type": "application/json",
         Authorization: accessToken ? `Bearer ${accessToken}` : "",
       },
-      body: body ? JSON.stringify(body) : undefined,
+      // if body includes a file, don't stringify it
+      body: body instanceof File ? body : JSON.stringify(body),
     };
 
     const response = await fetch(

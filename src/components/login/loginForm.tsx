@@ -7,8 +7,7 @@ const LoginForm = () => {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [errorMessage, setErrorMessage] = useState<string>();
-
-  const { setToken } = useContext(AuthContext);
+  const { setToken, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
@@ -21,8 +20,9 @@ const LoginForm = () => {
           );
           return;
         } else {
-          let response = data.data as unknown as { token: string };
+          let response = data.data as unknown as { token: string; user: any };
           setToken(response.token);
+          setUser(response.user);
           localStorage.setItem("token", response.token);
           navigate("/");
         }

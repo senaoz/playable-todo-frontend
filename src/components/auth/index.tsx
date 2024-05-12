@@ -2,24 +2,19 @@ import { AuthContext } from "./authProvider";
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export const useAuth = () => {
-  const { token, setToken, loading } = useContext(AuthContext);
-  return { token, setToken, loading };
-};
-
 export const useProtectedRoute = () => {
-  const { token, loading } = useAuth();
+  const { token, user } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !token) {
+    if (!user) {
       navigate("/login");
     }
-  }, [loading, token, navigate]);
+  }, [user, token]);
 };
 
 export const useLogout = () => {
-  const { setToken } = useAuth();
+  const { setToken } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const logout = () => {

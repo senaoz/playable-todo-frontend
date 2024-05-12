@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ToDoInterface } from "./index";
 import { fetchApi } from "../../utils/api";
 
@@ -53,14 +53,49 @@ const TodoItem = ({
       ...todo,
       status: !todo.status,
     });
-    console.log("Todo Completed");
+
+    fetchApi(`/api/todos/${todo.id}`, "PUT", todo)
+      .then(({ success, data }) => {
+        if (success) {
+          console.log(data);
+        } else {
+          console.error("Error:", data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const handleEdit = () => {
     setTodo(editedTodo);
-    console.log("Todo Edited");
+    fetchApi(`/api/todos/${todo.id}`, "PUT", editedTodo)
+      .then(({ success, data }) => {
+        if (success) {
+          console.log(data);
+        } else {
+          console.error("Error:", data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
     editMode && setEditMode(false);
   };
+
+  const handleDownload = (imageURL : string) => {
+    fetch(imageURL)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "image.jpg");
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode?.removeChild(link);
+      });
+  }
 
   return editMode ? (
     <li className="todo-box">
@@ -190,11 +225,19 @@ const TodoItem = ({
         ))}
       </div>
 
-      <span className={"grid grid-cols-3 gap-4 w-full"}>
+      <span className={"flex w-full"}>
         {todo.image && (
-          <img src={todo.image} alt={todo.title} className={"w-full"} />
+          <div>
+            <img src={`${process.env.REACT_APP_API_URL || "http://localhost:8080"}${todo.image}`} alt={todo.title}
+                 className={"w-full max-w-48 m-0 pr-4 pt-4"} />
+            <button onClick={() => handleDownload(`${process.env.REACT_APP_API_URL || "http://localhost:8080"}${todo.image}`)} className={"mt-4 button text-sm"}>
+              Download 📸
+            </button>
+          </div>
+
+
         )}
-        <p className="desciption">{todo.description}</p>
+        <p className="desciption grow">{todo.description}</p>
       </span>
     </li>
   );

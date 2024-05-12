@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./index.scss";
 import TodoItem from "./todo";
 import AddTodoForm from "./addTodo";
 import { fetchApi } from "../../utils/api";
+import { AuthContext } from "../auth/authProvider";
 
 export interface ToDoInterface {
   id?: number;
@@ -22,9 +23,13 @@ const TodoList: React.FC = () => {
   const [tags, setTags] = React.useState<string[]>([]);
   const [search, setSearch] = React.useState<string>("");
   const [addMode, setAddMode] = React.useState<boolean>(false);
+  const { user } = useContext(AuthContext);
 
   React.useEffect(() => {
-    fetchApi("/api/todos", "GET").then(
+    if (!user) {
+      return;
+    }
+    fetchApi(`/api/users/${user.id}/todos`, "GET").then(
       ({ success, data }) => {
         console.log(data);
         if (success && Array.isArray(data)) {
@@ -71,8 +76,46 @@ const TodoList: React.FC = () => {
         >
           {addMode ? "Close" : "Add"}
         </button>
-        <button className={"button secondary"}>Complete All</button>
-        <button className={"button secondary"}>Delete All</button>
+        <button
+          className={"button secondary"}
+          onClick={() => {
+            fetchApi(`/api/users/${user?.id}/todos-status`, "PUT", {
+              status: true,
+            }).then(
+              ({ success, data }) => {
+                if (success) {
+                  window.location.reload();
+                } else {
+                  console.error("Error:", data);
+                }
+              },
+              (error) => {
+                console.error("Error:", error);
+              },
+            )
+          }}
+        >
+          Complete All
+        </button>
+        <button
+          className={"button secondary"}
+          onClick={() => {
+            fetchApi(`/api/users/${user?.id}/todos`, "DELETE").then(
+              ({ success, data }) => {
+                if (success) {
+                  window.location.reload();
+                } else {
+                  console.error("Error:", data);
+                }
+              },
+              (error) => {
+                console.error("Error:", error);
+              },
+            )
+          }}
+        >
+          Delete All
+        </button>
       </div>
 
       <div className="flex gap-2">
@@ -95,19 +138,11 @@ const TodoList: React.FC = () => {
           })}
         </select>
       </div>
-
       {addMode && <AddTodoForm />}
-
       <ul>
         {selectedTodos.map((todo, index) => (
           <TodoItem key={index} {...todo} />
         ))}
-        <TodoItem
-          title="Title"
-          description="Todo"
-          status={false}
-          tags={["tag1", "tag2", "tag3"]}
-        />
       </ul>
     </div>
   );
