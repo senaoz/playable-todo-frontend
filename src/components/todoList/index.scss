@@ -137,12 +137,9 @@ ul {
 }
 
 img {
-  max-width: 25vh;
-  height: auto;
-  border-radius: var(--border-radius);
-  margin-right: 2em;
+  @apply rounded;
 }
 
 .tag {
-  @apply px-2 rounded bg-blue-900 text-blue-400;
+  @apply px-2 rounded bg-blue-700 bg-opacity-80 text-blue-300;
 }

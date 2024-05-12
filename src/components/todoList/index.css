@@ -34,7 +34,7 @@ ul {
   margin: 0;
   padding: 0;
 }
-.todo-box input[type="checkbox"] {
+.todo-box input[type=checkbox] {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -126,14 +126,11 @@ ul {
 }
 
 img {
-  max-width: 25vh;
-  height: auto;
-  border-radius: var(--border-radius);
-  margin-right: 2em;
+  @apply rounded;
 }
 
 .tag {
-  @apply px-2 rounded bg-blue-900 text-blue-400;
+  @apply px-2 rounded bg-blue-700 bg-opacity-80 text-blue-300;
 }
 
 /*# sourceMappingURL=index.css.map */

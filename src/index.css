@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 :root {
-  --primary-color: rgba(17 24 39);
+  --primary-color: rgb(15, 15, 30);
   --secondary-color: white;
-  --tertiary-color: #7dd3fcff;
+  --tertiary-color: rgb(249, 131, 11);
   --light-color: rgb(107, 114, 128);
   --border-radius: 4px;
   --gradient: linear-gradient(90deg, #52add9 0%, #709df7 51%, #4d78ef 100%);
@@ -15,7 +15,7 @@
     #0f1a29 88.16%
   );
   --font-size: 16px;
-  --font-family: Inter, sans-serif;
+  --font-family: Eudoxus Sans, Inter, sans-serif;
   --line-height: 1.6;
 }
 
@@ -81,6 +81,7 @@ body select {
 }
 
 .centerized {
+  min-height: calc(100vh - 12rem);
   margin: auto;
   height: 60vh;
   display: flex;

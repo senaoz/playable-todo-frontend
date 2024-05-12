@@ -4,22 +4,24 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.scss";
 import LoginPage from "./components/login";
 import Layout from "./components/layout";
-import App from "./App";
 import { AuthProvider } from "./components/auth/authProvider";
 import { Navigate } from "react-router-dom";
+import Logout from "./components/logout";
+import ProtectedToDos from "./App";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
     children: [
-      { path: "/", element: <App /> },
+      { path: "/", element: <ProtectedToDos /> },
       { path: "/login", element: <LoginPage /> },
+      {
+        path: "/logout",
+        element: <Logout />,
+      },
+      { path: "*", element: <Navigate to="/" /> },
     ],
-  },
-  {
-    path: "/logout",
-    element: <Navigate to="/login" />,
   },
 ]);
 

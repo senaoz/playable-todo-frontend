@@ -1,13 +1,15 @@
 import React from "react";
 import TodoList from "./components/todoList";
+import { useProtectedRoute } from "./components/auth";
 
-const App: React.FC = () => {
+const ProtectedToDos: React.FC = () => {
+  useProtectedRoute();
+
   return (
     <div>
-      Public Page
       <TodoList />
     </div>
   );
 };
 
-export default App;
+export default ProtectedToDos;
