@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --primary-color: rgba(17 24 39);
   --secondary-color: white;
@@ -28,42 +32,23 @@ body {
   padding: 1em;
 
   input,
-  textarea {
+  textarea,
+  select {
     background: rgba(107, 114, 128, 0.4);
     color: var(--secondary-color);
   }
+
+  @apply prose prose-invert lg:max-w-6xl mx-auto;
 }
 
 .navigation {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1em 5em;
-
   a {
-    color: var(--secondary-color);
-    text-decoration: none;
-    font-weight: bold;
+    @apply mr-4 no-underline hover:text-blue-500;
   }
-
-  a:hover {
-    color: var(--tertiary-color);
-  }
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  margin: 0 5em;
 }
 
 .button {
-  padding: 0.5em 1em;
-  border: none;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-size: 1em;
-  transition: all 0.3s ease;
+  @apply px-4 py-1.5 rounded text-white transition-all duration-300 ease-in-out bg-gray-600 shadow-md hover:shadow-lg focus:outline-none;
 
   &.primary {
     font-weight: 600;
@@ -106,10 +91,6 @@ body {
   }
 }
 
-.errorMessage {
-  margin-bottom: 1em;
-}
-
 .centerized {
   margin: auto;
   height: 60vh;
@@ -122,4 +103,10 @@ body {
   p {
     text-align: center;
   }
+}
+
+input,
+textarea,
+select {
+  @apply p-2 rounded resize-none;
 }

@@ -1,13 +1,13 @@
-import { Link, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import { Navigation } from "./navigation";
+import { useProtectedRoute } from "../auth";
 
 function Layout() {
+  useProtectedRoute();
+
   return (
-    <div className="dark-background">
-      <nav className={"navigation"}>
-        <Link to="/">Public Page</Link>
-        <Link to="login">Login</Link>
-        <Link to="protected">Protected</Link>
-      </nav>
+    <>
+      <Navigation />
       <div className="container">
         <div>
           <h1>Auth Example using RouterProvider</h1>
@@ -34,7 +34,7 @@ function Layout() {
 
         <Outlet />
       </div>
-    </div>
+    </>
   );
 }
 

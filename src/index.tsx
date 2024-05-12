@@ -1,38 +1,25 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-
 import "./index.scss";
 import LoginPage from "./components/login";
 import Layout from "./components/layout";
 import App from "./App";
-
-function ProtectedPage() {
-  return <h3>Protected</h3>;
-}
+import { AuthProvider } from "./components/auth/authProvider";
+import { Navigate } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
-    id: "root",
     path: "/",
-    Component: Layout,
+    element: <Layout />,
     children: [
-      {
-        index: true,
-        Component: App,
-      },
-      {
-        path: "login",
-        Component: LoginPage,
-      },
-      {
-        path: "protected",
-        Component: ProtectedPage,
-      },
+      { path: "/", element: <App /> },
+      { path: "/login", element: <LoginPage /> },
     ],
   },
   {
     path: "/logout",
+    element: <Navigate to="/login" />,
   },
 ]);
 
@@ -41,5 +28,7 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />,
+  <AuthProvider>
+    <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
+  </AuthProvider>,
 );
