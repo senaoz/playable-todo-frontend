@@ -1,26 +1,32 @@
-import React, { createContext, useState, useEffect } from "react";
+import { AuthContext } from "./authProvider";
+import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-export const AuthContext = createContext({
-  token: null,
-  setToken: () => {},
-  loading: true,
-} as any);
+export const useAuth = () => {
+  const { token, setToken, loading } = useContext(AuthContext);
+  return { token, setToken, loading };
+};
 
-export const AuthProvider = ({ children }: any) => {
-  const [token, setToken] = useState<string>();
-  const [loading, setLoading] = useState<boolean>(true);
+export const useProtectedRoute = () => {
+  const { token, loading } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setToken(token);
+    if (!loading && !token) {
+      navigate("/login");
     }
-    setLoading(false);
-  }, []);
+  }, [loading, token, navigate]);
+};
 
-  return (
-    <AuthContext.Provider value={{ token, setToken, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+export const useLogout = () => {
+  const { setToken } = useAuth();
+  const navigate = useNavigate();
+
+  const logout = () => {
+    setToken(null);
+    localStorage.removeItem("token");
+    navigate("/");
+  };
+
+  return logout;
 };
