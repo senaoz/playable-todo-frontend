@@ -21,9 +21,8 @@ const LoginForm = () => {
           return;
         } else {
           let response = data.data as unknown as { token: string; user: any };
-          setToken(response.token);
-          setUser(response.user);
-          localStorage.setItem("token", response.token);
+          console.log(response.user, response.token);
+          setToken(response.token, response.user);
           navigate("/");
         }
       },

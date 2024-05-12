@@ -28,10 +28,27 @@ const SignUpForm = () => {
           );
           return;
         } else {
-          let response = data as unknown as { token: string };
-          setToken(response.token);
-          localStorage.setItem("token", response.token);
-          navigate("/");
+          fetchApi("/api/login", "POST", { email, password }).then(
+            (data) => {
+              if (data.success === false) {
+                setErrorMessage(
+                  data.error || "Invalid email or password. Please try again.",
+                );
+                return;
+              } else {
+                let response = data.data as unknown as {
+                  token: string;
+                  user: any;
+                };
+                console.log(response.user, response.token);
+                setToken(response.token, response.user);
+                navigate("/");
+              }
+            },
+            (error) => {
+              console.error(error);
+            },
+          );
         }
       },
       (error) => {

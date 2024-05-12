@@ -1,11 +1,10 @@
 import { Outlet } from "react-router-dom";
 import { Navigation } from "./navigation";
-import { useProtectedRoute } from "../auth";
 import { useContext } from "react";
 import { AuthContext } from "../auth/authProvider";
+
 function Layout() {
   const { user } = useContext(AuthContext);
-
   return (
     <>
       <Navigation />

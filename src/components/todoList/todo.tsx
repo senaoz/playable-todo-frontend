@@ -83,7 +83,7 @@ const TodoItem = ({
     editMode && setEditMode(false);
   };
 
-  const handleDownload = (imageURL : string) => {
+  const handleDownload = (imageURL: string) => {
     fetch(imageURL)
       .then((response) => response.blob())
       .then((blob) => {
@@ -95,7 +95,7 @@ const TodoItem = ({
         link.click();
         link.parentNode?.removeChild(link);
       });
-  }
+  };
 
   return editMode ? (
     <li className="todo-box">
@@ -228,14 +228,22 @@ const TodoItem = ({
       <span className={"flex w-full"}>
         {todo.image && (
           <div>
-            <img src={`${process.env.REACT_APP_API_URL || "http://localhost:8080"}${todo.image}`} alt={todo.title}
-                 className={"w-full max-w-48 m-0 pr-4 pt-4"} />
-            <button onClick={() => handleDownload(`${process.env.REACT_APP_API_URL || "http://localhost:8080"}${todo.image}`)} className={"mt-4 button text-sm"}>
+            <img
+              src={`${process.env.REACT_APP_API_URL || "http://localhost:8080"}${todo.image}`}
+              alt={todo.title}
+              className={"w-full max-w-48 m-0 pr-4 pt-4"}
+            />
+            <button
+              onClick={() =>
+                handleDownload(
+                  `${process.env.REACT_APP_API_URL || "http://localhost:8080"}${todo.image}`,
+                )
+              }
+              className={"mt-4 button text-sm"}
+            >
               Download 📸
             </button>
           </div>
-
-
         )}
         <p className="desciption grow">{todo.description}</p>
       </span>

@@ -92,7 +92,7 @@ const TodoList: React.FC = () => {
               (error) => {
                 console.error("Error:", error);
               },
-            )
+            );
           }}
         >
           Complete All
@@ -111,7 +111,7 @@ const TodoList: React.FC = () => {
               (error) => {
                 console.error("Error:", error);
               },
-            )
+            );
           }}
         >
           Delete All

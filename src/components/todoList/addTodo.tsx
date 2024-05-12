@@ -3,7 +3,6 @@ import { fetchApi } from "../../utils/api";
 import { AuthContext } from "../auth/authProvider";
 import imageCompression from "browser-image-compression";
 
-
 export const AddTodoForm: React.FC = () => {
   const [title, setTitle] = React.useState<string>();
   const [date, setDate] = React.useState<Date>();
@@ -20,17 +19,17 @@ export const AddTodoForm: React.FC = () => {
       maxSizeKB: 1024,
       maxWidthOrHeight: 400,
       useWebWorker: true,
-    }
+    };
 
     try {
       const compressedFile = await imageCompression(imageFile, options);
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = function (event) {
         // @ts-ignore
         const dataUrl = event.target.result;
         // @ts-ignore
-        const base64Data = dataUrl.split(',')[1]; // Extract Base64 data from data URL
-        setCompressedImage(base64Data)
+        const base64Data = dataUrl.split(",")[1]; // Extract Base64 data from data URL
+        setCompressedImage(base64Data);
       };
       reader.readAsDataURL(compressedFile);
 
@@ -50,16 +49,14 @@ export const AddTodoForm: React.FC = () => {
           console.error("Error:", error);
         },
       );
-
     } catch (error) {
       console.log(error);
     }
-
   }
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     if (image) {
-      handleImageUpload(image).then(r => console.log(r));
+      handleImageUpload(image).then((r) => console.log(r));
     }
 
     e.preventDefault();

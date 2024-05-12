@@ -4,7 +4,7 @@ import { fetchApi } from "../../utils/api";
 
 const Logout = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const { setToken, setUser } = useContext(AuthContext);
+  const { clearUserInfo } = useContext(AuthContext);
 
   // Clear the token from local storage and context
   useEffect(() => {
@@ -16,8 +16,7 @@ const Logout = () => {
         console.error(error);
       })
       .then(() => {
-        setToken(null);
-        setUser(null);
+        clearUserInfo();
         localStorage.removeItem("token");
         setLoading(false);
       });
