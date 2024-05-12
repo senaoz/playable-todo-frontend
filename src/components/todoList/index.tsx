@@ -23,12 +23,14 @@ const TodoList: React.FC = () => {
   const [tags, setTags] = React.useState<string[]>([]);
   const [search, setSearch] = React.useState<string>("");
   const [addMode, setAddMode] = React.useState<boolean>(false);
+  const [remaining, setRemaining] = React.useState<number>(0);
   const { user } = useContext(AuthContext);
 
   React.useEffect(() => {
     if (!user) {
       return;
     }
+
     fetchApi(`/api/users/${user.id}/todos`, "GET").then(
       ({ success, data }) => {
         console.log(data);
@@ -42,9 +44,10 @@ const TodoList: React.FC = () => {
         console.error("Error:", error);
       },
     );
-  }, []);
+  }, [user]);
 
   React.useEffect(() => {
+    setRemaining(todos.filter((todo) => !todo.status).length);
     setSelectedTodos(todos);
     todos.forEach((todo) => {
       todo.tags?.forEach((tag) => {
@@ -68,7 +71,7 @@ const TodoList: React.FC = () => {
 
   return (
     <div>
-      <h2>Todos ({todos.filter((todo) => !todo.status).length} remaining)</h2>
+      <h2>Todos ({remaining} remaining)</h2>
       <div className="todo-buttons">
         <button
           className={"button primary"}

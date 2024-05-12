@@ -7,8 +7,17 @@ export const useProtectedRoute = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const localUser = localStorage.getItem("user");
+    const localToken = localStorage.getItem("token");
+
     if (!user || !token) {
-      navigate("/login");
+      if (localUser && localToken) {
+        return;
+      } else {
+        navigate("/login");
+      }
+    } else if (!loading && user && token) {
+      if (window.location.pathname === "/login") navigate("/");
     }
   }, [user, token, navigate, loading]);
 };

@@ -54,7 +54,10 @@ const TodoItem = ({
       status: !todo.status,
     });
 
-    fetchApi(`/api/todos/${todo.id}`, "PUT", todo)
+    fetchApi(`/api/todos/${todo.id}`, "PUT", {
+      ...todo,
+      status: !todo.status,
+    })
       .then(({ success, data }) => {
         if (success) {
           console.log(data);
@@ -213,11 +216,7 @@ const TodoItem = ({
           Delete
         </button>
       </div>
-      <div
-        className="
-      mt-2 flex flex-wrap gap-2 w-full
-      "
-      >
+      <div className={"mt-2 flex flex-wrap gap-2 w-full"}>
         {todo.tags?.map((tag, index) => (
           <span key={index} className={"tag"}>
             {tag}
