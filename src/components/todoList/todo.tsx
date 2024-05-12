@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { ToDoInterface } from "./index";
 import { fetchApi } from "../../utils/api";
+import imageCompression from "browser-image-compression";
 
 const TodoItem = ({
   id,
@@ -30,6 +31,69 @@ const TodoItem = ({
     image: todo.image,
     tags: todo.tags,
   });
+  const [updatedImage, setUpdatedImage] = React.useState<File>();
+  const [compressedImage, setCompressedImage] = React.useState<string>();
+
+  async function handleImageUpload(image: File) {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+    };
+
+    return imageCompression(image, options)
+      .then((compressedFile) => {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          // @ts-ignore
+          const dataUrl = event.target.result;
+          // @ts-ignore
+          const base64Data = dataUrl.split(",")[1]; // Extract Base64 data from data URL
+          setCompressedImage(base64Data);
+        };
+
+        reader.readAsDataURL(compressedFile);
+
+        // wait while compressedImage is setted
+
+      }).then(
+        () => {
+          if(compressedImage) {
+            fetchApi("/api/upload", "POST", {
+              image: compressedImage,
+            }).then(
+              ({ success, data }) => {
+                if (success) {
+                  console.log(data);
+
+                  setEditedTodo(
+                    {
+                      ...editedTodo,
+                      // @ts-ignore
+                      image : data.url
+                    }
+                  )
+                } else {
+                  console.error("Error:", data);
+                }
+              },
+              (error) => {
+                console.error("Error:", error);
+              },
+            )
+          }
+        }
+      )
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
+  useEffect(() => {
+    if (updatedImage) {
+      handleImageUpload(updatedImage).then(() => console.log(updatedImage));
+    }
+  }, [updatedImage]);
 
   const handleDelete = () => {
     console.log("Todo Deleted");
@@ -153,13 +217,7 @@ const TodoItem = ({
           <input
             type={"file"}
             accept={"image/*"}
-            value={editedTodo.image}
-            onChange={(e) =>
-              setEditedTodo({
-                ...editedTodo,
-                image: e.target.value,
-              })
-            }
+            onChange={(e) => setUpdatedImage(e.target.files![0])}
           />
         </span>
         <textarea

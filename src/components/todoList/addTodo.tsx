@@ -71,7 +71,7 @@ export const AddTodoForm: React.FC = () => {
     }).then(
       ({ success, data }) => {
         if (success) {
-          // console.log(data);
+          console.log(data);
         } else {
           console.error("Error:", data);
         }
