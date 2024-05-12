@@ -20,7 +20,10 @@ export const fetchApi = async <T>(
       body: body ? JSON.stringify(body) : undefined,
     };
 
-    const response = await fetch(url, options);
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}${url}`,
+      options,
+    );
     const responseData = await response.json();
 
     if (!response.ok) {
