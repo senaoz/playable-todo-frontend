@@ -34,7 +34,7 @@ ul {
   margin: 0;
   padding: 0;
 }
-.todo-box input[type=checkbox] {
+.todo-box input[type="checkbox"] {
   position: absolute;
   opacity: 0;
   cursor: pointer;
@@ -44,30 +44,6 @@ ul {
 .todo-box p {
   padding: 0;
   margin: 1em 0 0 0;
-}
-
-.edit textarea {
-  width: 99%;
-  margin-top: 0.5em;
-  font-family: Inter;
-  font-size: 1em;
-  resize: none;
-}
-.edit input[type=text] {
-  font-size: 1.4em;
-  font-weight: bold;
-}
-.edit input[type=text],
-.edit textarea {
-  background: rgba(107, 114, 128, 0.4);
-  color: var(--secondary-color);
-  padding: 0.5em;
-  border: none;
-  border-radius: var(--border-radius);
-}
-.edit input[type=text]::placeholder,
-.edit textarea::placeholder {
-  color: var(--light-color);
 }
 
 .ratio-container {
@@ -121,8 +97,7 @@ ul {
 
 .newTodoFormContainer {
   background: rgba(107, 114, 128, 0.2);
-  padding: 1em;
-  border-radius: var(--border-radius);
+  padding: 1.5em;
   margin-top: 1em;
   margin-bottom: 1em;
 }
@@ -139,7 +114,6 @@ ul {
 }
 .addNewTodoForm input {
   padding: 0.5em;
-  border-radius: var(--border-radius);
   border: 1px solid var(--light-color);
 }
 .addNewTodoForm button {
@@ -151,4 +125,15 @@ ul {
   }
 }
 
-/*# sourceMappingURL=list.css.map */
+img {
+  max-width: 25vh;
+  height: auto;
+  border-radius: var(--border-radius);
+  margin-right: 2em;
+}
+
+.tag {
+  @apply px-2 rounded bg-blue-900 text-blue-400;
+}
+
+/*# sourceMappingURL=index.css.map */

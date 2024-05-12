@@ -1,33 +1,41 @@
 import React from "react";
+import { fetchApi } from "../../utils/api";
 
 export const AddTodoForm: React.FC = () => {
-  const [title, setTitle] = React.useState<string>("");
-  const [description, setDescription] = React.useState<string>("");
+  const [title, setTitle] = React.useState<string>();
+  const [date, setDate] = React.useState<Date>();
+  const [description, setDescription] = React.useState<string>();
   const [image, setImage] = React.useState<File>();
+  const [tags, setTags] = React.useState<string[]>();
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("image", image as Blob);
-
-    fetch("/api/todos", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
+    fetchApi("/api/todos", "POST", {
+      title,
+      description,
+      status: false,
+      due_date: date,
+      userId: 1,
+      image,
+      tags,
+    }).then(
+      ({ success, data }) => {
+        if (success) {
+          console.log(data);
+        } else {
+          console.error("Error:", data);
+        }
+      },
+      (error) => {
         console.error("Error:", error);
-      });
+      },
+    );
+
+    window.location.reload();
   };
 
   return (
-    <div className="newTodoFormContainer edit">
+    <div className="newTodoFormContainer todoFormInputs">
       <form onSubmit={handleSubmit} className={"addNewTodoForm"}>
         <h2>Create New Todo!</h2>
         <input
@@ -36,6 +44,14 @@ export const AddTodoForm: React.FC = () => {
           placeholder={"Enter title"}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          required={true}
+        />
+        <input
+          type="date"
+          id="date"
+          value={date?.toISOString().split("T")[0]}
+          onKeyDown={(e) => e.preventDefault()}
+          onChange={(e) => setDate(new Date(e.target.value))}
         />
         <textarea
           placeholder={"Enter description"}
@@ -45,9 +61,28 @@ export const AddTodoForm: React.FC = () => {
         ></textarea>
         <input
           type="file"
-          id="image"
+          accept={"image/*"}
+          id="getImage"
+          style={{ display: "none" }}
+          placeholder={"Upload image"}
           onChange={(e) => setImage(e.target.files![0])}
         />
+        <input
+          type="text"
+          id="tags"
+          placeholder={"Enter tags (comma separated)"}
+          required={true}
+          value={tags?.join(",")}
+          onChange={(e) => setTags(e.target.value.split(","))}
+        />
+
+        <button
+          className={"button"}
+          onClick={() => document.getElementById("getImage")?.click()}
+        >
+          {image && <img src={URL.createObjectURL(image)} alt={image.name} />}
+          {image ? "" : "Upload Image"}
+        </button>
         <button type="submit" className={"button primary"}>
           Add
         </button>
