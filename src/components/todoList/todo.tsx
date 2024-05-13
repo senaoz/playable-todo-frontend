@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { ToDoInterface } from "./index";
 import { fetchApi } from "../../utils/api";
 import imageCompression from "browser-image-compression";
@@ -12,7 +12,7 @@ const TodoItem = ({
   image,
   tags,
 }: ToDoInterface) => {
-  const [todo, setTodo] = React.useState<ToDoInterface>({
+  const [todo, setTodo] = useState<ToDoInterface>({
     id,
     title,
     image,
@@ -21,18 +21,10 @@ const TodoItem = ({
     status,
     description,
   });
-  const [editMode, setEditMode] = React.useState<boolean>(false);
-  const [editedTodo, setEditedTodo] = React.useState<ToDoInterface>({
-    id: todo.id,
-    title: todo.title,
-    description: todo.description,
-    status: todo.status,
-    due_date: todo.due_date,
-    image: todo.image,
-    tags: todo.tags,
-  });
-  const [updatedImage, setUpdatedImage] = React.useState<File>();
-  const [compressedImage, setCompressedImage] = React.useState<string>();
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [editedTodo, setEditedTodo] = useState<ToDoInterface>({ ...todo });
+  const [updatedImage, setUpdatedImage] = useState<File>();
+  const [compressedImage, setCompressedImage] = useState<string>();
 
   async function handleImageUpload(image: File) {
     const options = {
@@ -41,113 +33,103 @@ const TodoItem = ({
       useWebWorker: true,
     };
 
-    return imageCompression(image, options)
-      .then((compressedFile) => {
+    try {
+      const compressedFile = await imageCompression(image, options);
+      const dataUrl = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = function (event) {
-          // @ts-ignore
-          const dataUrl = event.target.result;
-          // @ts-ignore
-          const base64Data = dataUrl.split(",")[1]; // Extract Base64 data from data URL
-          setCompressedImage(base64Data);
-        };
-
+        reader.onload = (event) => resolve(event.target?.result as string);
+        reader.onerror = (error) => reject(error);
         reader.readAsDataURL(compressedFile);
-
-        // wait while compressedImage is setted
-
-      }).then(
-        () => {
-          if(compressedImage) {
-            fetchApi("/api/upload", "POST", {
-              image: compressedImage,
-            }).then(
-              ({ success, data }) => {
-                if (success) {
-                  console.log(data);
-
-                  setEditedTodo(
-                    {
-                      ...editedTodo,
-                      // @ts-ignore
-                      image : data.url
-                    }
-                  )
-                } else {
-                  console.error("Error:", data);
-                }
-              },
-              (error) => {
-                console.error("Error:", error);
-              },
-            )
-          }
-        }
-      )
-      .catch((error) => {
-        console.error("Error:", error);
       });
+
+      setCompressedImage(dataUrl);
+
+      if (compressedImage) {
+        const { success, data } = await fetchApi("/api/upload", "POST", {
+          image: compressedImage,
+        });
+        if (success) {
+          console.log(data);
+
+          setEditedTodo({
+            ...editedTodo,
+            // @ts-ignore
+            image: data.url,
+          });
+
+          await fetchApi(`/api/todos/${todo.id}`, "PUT", {
+            ...editedTodo,
+            // @ts-ignore
+            image: data.url,
+          });
+        } else {
+          console.error("Error:", data);
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   }
 
   useEffect(() => {
     if (updatedImage) {
-      handleImageUpload(updatedImage).then(() => console.log(updatedImage));
+      handleImageUpload(updatedImage);
     }
   }, [updatedImage]);
 
-  const handleDelete = () => {
-    console.log("Todo Deleted");
-    fetchApi(`/api/todos/${todo.id}`, "DELETE")
-      .then(({ success, data }) => {
-        if (success) {
-          console.log(data);
-          window.location.reload();
-        } else {
-          console.error("Error:", data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      })
-      .then(() => window.location.reload());
+  const handleDelete = async () => {
+    try {
+      const { success, data } = await fetchApi(
+        `/api/todos/${todo.id}`,
+        "DELETE",
+      );
+      if (success) {
+        console.log(data);
+        window.location.reload();
+      } else {
+        console.error("Error:", data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
+    const newStatus = !todo.status;
     setTodo({
       ...todo,
-      status: !todo.status,
+      status: newStatus,
     });
 
-    fetchApi(`/api/todos/${todo.id}`, "PUT", {
-      ...todo,
-      status: !todo.status,
-    })
-      .then(({ success, data }) => {
-        if (success) {
-          console.log(data);
-        } else {
-          console.error("Error:", data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
+    try {
+      const { success, data } = await fetchApi(`/api/todos/${todo.id}`, "PUT", {
+        ...todo,
+        status: newStatus,
       });
+      if (!success) {
+        console.error("Error:", data);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
-  const handleEdit = () => {
-    setTodo(editedTodo);
-    fetchApi(`/api/todos/${todo.id}`, "PUT", editedTodo)
-      .then(({ success, data }) => {
-        if (success) {
-          console.log(data);
-        } else {
-          console.error("Error:", data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-    editMode && setEditMode(false);
+  const handleEdit = async () => {
+    try {
+      const { success, data } = await fetchApi(
+        `/api/todos/${todo.id}`,
+        "PUT",
+        editedTodo,
+      );
+      if (!success) {
+        console.error("Error:", data);
+      } else {
+        setTodo(editedTodo);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    setEditMode(false);
   };
 
   const handleDownload = (imageURL: string) => {
@@ -175,11 +157,6 @@ const TodoItem = ({
           />
           <span className="checkmark"></span>
         </label>
-        <input
-          type="checkbox"
-          checked={todo.status}
-          onChange={handleComplete}
-        />
         <input
           type="text"
           value={editedTodo.title}
@@ -253,15 +230,15 @@ const TodoItem = ({
           />
           <span className="checkmark"></span>
         </label>
-        <input
-          type="checkbox"
-          checked={todo.status}
-          onChange={handleComplete}
-        />
         <h2>
           {todo.title}{" "}
           {todo.due_date &&
-            `- ${todo.due_date?.toString().split("T")[0].split("-").reverse().join(".")}`}
+            `- ${todo.due_date
+              .toString()
+              .split("T")[0]
+              .split("-")
+              .reverse()
+              .join(".")}`}
         </h2>
 
         <button
