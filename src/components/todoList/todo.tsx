@@ -24,58 +24,49 @@ const TodoItem = ({
   const [editMode, setEditMode] = useState<boolean>(false);
   const [editedTodo, setEditedTodo] = useState<ToDoInterface>({ ...todo });
   const [updatedImage, setUpdatedImage] = useState<File>();
-  const [compressedImage, setCompressedImage] = useState<string>();
-
-  async function handleImageUpload(image: File) {
-    const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-    };
-
-    try {
-      const compressedFile = await imageCompression(image, options);
-      const dataUrl = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (event) => resolve(event.target?.result as string);
-        reader.onerror = (error) => reject(error);
-        reader.readAsDataURL(compressedFile);
-      });
-
-      setCompressedImage(dataUrl);
-
-      if (compressedImage) {
-        const { success, data } = await fetchApi("/api/upload", "POST", {
-          image: compressedImage,
-        });
-        if (success) {
-          console.log(data);
-
-          setEditedTodo({
-            ...editedTodo,
-            // @ts-ignore
-            image: data.url,
-          });
-
-          await fetchApi(`/api/todos/${todo.id}`, "PUT", {
-            ...editedTodo,
-            // @ts-ignore
-            image: data.url,
-          });
-        } else {
-          console.error("Error:", data);
-        }
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  }
+  const [imageURL, setImageURL] = useState<string>();
+  const [base64Image, setBase64Image] = useState<string>();
 
   useEffect(() => {
     if (updatedImage) {
-      handleImageUpload(updatedImage);
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
+
+      imageCompression(updatedImage, options)
+        .then((compressedImage) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            // @ts-ignore
+            setBase64Image(reader.result.split(",")[1]);
+          };
+          reader.readAsDataURL(compressedImage);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+
+      if (base64Image) {
+        fetchApi("/api/upload", "POST", {
+          image: base64Image,
+        })
+          .then((data) => {
+            // @ts-ignore
+            setImageURL(data.data.url);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      setEditedTodo((prevState) => ({
+        ...prevState,
+        image: imageURL,
+      }));
     }
-  }, [updatedImage]);
+  }, [updatedImage, base64Image]);
 
   const handleDelete = async () => {
     try {
@@ -183,7 +174,7 @@ const TodoItem = ({
         <span className={"grid grid-cols-2 gap-4 w-full"}>
           <input
             type={"date"}
-            value={editedTodo.due_date}
+            value={editedTodo.due_date?.split("T")[0]}
             onChange={(e) =>
               setEditedTodo({
                 ...editedTodo,

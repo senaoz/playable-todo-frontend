@@ -13,9 +13,6 @@ export const AddTodoForm: React.FC = () => {
   const [imageURL, setImageURL] = useState<string>();
   const { user } = useContext(AuthContext);
 
-  // compress image before uploading (and then convert it to base64 to display it in the form)
-  // and then post /api/upload and get the url from the result of this post request, to be saved in the database as a string in the todo object
-
   useEffect(() => {
     if (image) {
       const options = {
